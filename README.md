@@ -117,6 +117,19 @@ Then perform a reboot.
   </tr>
 </table>
 
+### 170tune compatibility (fork)
+
+This fork additionally opens the FBPA privilege windows that live memory control needs —
+something the upstream repo does not provide. Pair it with
+[vektorprime/170tune](https://github.com/vektorprime/170tune) (`fbpa-first-active`):
+
+- **8 GB (`0x20C2`)**: full windows — FBPA_MEM, broadcast FBPA_PLL0/1/2, and unicast
+  FBPA0 PLL. The live NDIV lever, timings, and refresh all work (`preflight` green).
+- **10 GB (`0x2082`)**: FBPA_MEM + broadcast FBPA_PLL0/1/2. The unicast FBPA0 row is
+  skipped on this SKU — its window is orphaned in hardware (the SEC2 booter itself
+  faults touching it, killing GSP init if forced). SM, timings, and refresh levers
+  work; the 170tune fork drives the memory lever through the first live FBPA instead.
+
 ---
 
 ## Uninstall
