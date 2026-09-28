@@ -1,22 +1,17 @@
-<div align="center" style="text-align: center;">
-  <img width="1280" height="300" alt="cmpunlocker banner" src="https://github.com/user-attachments/assets/6edceb8e-afcb-43a4-b5b2-4321d81284d1" />
-</div>
+# cmpunlocker — fbpa-pll-170tune fork
 
----
+> **Why we created this branch:** we wanted the current cmpunlocker changes (e.g. 74 SM) while also
+> having the overclocking capability of
+> [asm64-cmpunlocker](https://github.com/asm64-hooligan/cmpunlocker) (asm64-hooligan's fork).
 
-## What is cmpunlocker?
-
-<p>
-  cmpunlocker restores numerous features that are restricted in firmware/OTP configuration of the NVIDIA CMP 170HX. cmpunlocker has been featured by multiple outlets like wccftech, Tom's Hardware and LinusTechTips.
-</p>
-
-<table>
-  <tr>
-    <td><a href="https://www.youtube.com/watch?v=pvSdeU13hKc" title=""><img src="https://github.com/user-attachments/assets/be0a9cab-19b6-47c4-91cd-cb6a98be406f"></a></td>
-    <td><a href="https://www.tomshardware.com/pc-components/gpus/nvidia-crypto-mining-gpus-hacked-to-restore-locked-away-vram-in-order-to-feed-ai-boom-software-mod-unlocks-64gb-of-vram-on-usd250-cmp-170hx" title="Article by Tom's Hardware"><img src="https://github.com/user-attachments/assets/e801b2b3-3002-4346-a9ad-6b228ef62b6a"></a></td>
-    <td><a href="https://wccftech.com/nvidia-cmp-170hx-8-10-gb-prices-explode-over-1000-usd-as-tool-unlocks-hidden-64-80gb-vram/" title="Article by wccftech"><img src="https://github.com/user-attachments/assets/475b5acf-999b-430c-8ede-1c39e9fd6b97"></a></td>
-  </tr>
-</table>
+Upstream cmpunlocker never opens the FBPA_PLL privilege windows, so no live HBM memory-clock lever
+works on it; the asm64-cmpunlocker lineage opens them (and bakes a clock in with `--mclk-ndiv`), but
+has not kept up with upstream's unlock work (full SM config, geometry, BAR1, persistence). This
+branch merges the two: it stays on upstream cmpunlocker and adds the FBPA PLL/MEM window opens from
+the asm64 lineage, while deliberately **not** baking any clock into the driver — the card boots at
+stock, and the memory clock is set live from userspace (e.g. via
+[170tune](https://github.com/vektorprime/170tune)), so a bad value is a reboot away instead of a
+reinstall. See [170tune compatibility (fork)](#170tune-compatibility-fork) below.
 
 **[Join our Discord community](https://discord.gg/CdHSakKSFv)** for support and discussions.
 
@@ -115,13 +110,18 @@ Then perform a reboot.
     <td>Persistence across reboot (patched modules)</td>
     <td>Working ✓</td>
   </tr>
+  <tr>
+    <td>Live HBM memory-clock lever (FBPA PLL/MEM windows open, fork)</td>
+    <td>Working ✓</td>
+  </tr>
 </table>
 
 ### 170tune compatibility (fork)
 
-This fork additionally opens the FBPA privilege windows that live memory control needs —
-something the upstream repo does not provide. Pair it with
-[vektorprime/170tune](https://github.com/vektorprime/170tune) (`fbpa-first-active`):
+This fork additionally opens the FBPA privilege windows that live memory control needs (the same
+windows the asm64-cmpunlocker lineage opens) — something the upstream repo does not provide.
+No clock is baked into the driver; the card boots stock, which is exactly what 170tune requires.
+Pair it with [vektorprime/170tune](https://github.com/vektorprime/170tune) (`fbpa-first-active`):
 
 - **8 GB (`0x20C2`)**: full windows — FBPA_MEM, broadcast FBPA_PLL0/1/2, and unicast
   FBPA0 PLL. The live NDIV lever, timings, and refresh all work (`preflight` green).
