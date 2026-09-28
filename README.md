@@ -13,8 +13,6 @@ stock, and the memory clock is set live from userspace (e.g. via
 [170tune](https://github.com/vektorprime/170tune)), so a bad value is a reboot away instead of a
 reinstall. See [170tune compatibility (fork)](#170tune-compatibility-fork) below.
 
-**[Join our Discord community](https://discord.gg/CdHSakKSFv)** for support and discussions.
-
 ---
 
 ## Proof of Concept
